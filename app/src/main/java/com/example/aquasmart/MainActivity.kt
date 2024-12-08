@@ -25,6 +25,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var idBtnBuscar: Button
+    private lateinit var idBtnConectar: Button
+    private lateinit var idBtnDesconectar: Button
+    private lateinit var idBtnControllerBomba: Button
+    private lateinit var humidityTextView: TextView
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,17 +40,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //setSupportActionBar(binding.toolbar)
 
-        // val navController = findNavController(R.id.nav_host_fragment_content_main)
-        //appBarConfiguration = AppBarConfiguration(navController.graph)
-        //setupActionBarWithNavController(navController, appBarConfiguration)
-
-        //binding.fab.setOnClickListener { view ->
-        //    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        //        .setAction("Action", null)
-        //        .setAnchorView(R.id.fab).show()
-        //}
     }
 
 

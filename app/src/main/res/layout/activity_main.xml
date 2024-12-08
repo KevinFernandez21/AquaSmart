@@ -13,72 +13,37 @@
     <!-- Botón para Controlar la Bomba -->
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/idBtnDesconectar"
+        android:layout_width="411dp"
+        android:layout_height="85dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/idBtnConectar">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023">
 
-        <TextView
-            android:id="@+id/titleText"
+        <ImageView
+            android:id="@+id/imageView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="132dp"
-            android:text="Control de Bomba y Humedad"
-            android:textSize="20sp" />
+            android:layout_weight="1"
+            tools:srcCompat="@tools:sample/avatars" />
 
-        <TextView
-            android:id="@+id/humidityText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
-            android:text="Humedad: 0"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/idBomba"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Activar Bomba"
-            android:textSize="18sp" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/idBtnDesconectar"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Desconectar"
+        android:layout_height="646dp"
+        android:background="#E2F3FD"
+        android:orientation="vertical"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <Button
-        android:id="@+id/idBtnBuscar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Buscar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="53dp" />
-
-    <Button
-        android:id="@+id/idBtnConectar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Conectar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="84dp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
