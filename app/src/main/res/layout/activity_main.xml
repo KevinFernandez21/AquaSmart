@@ -54,6 +54,7 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+        app:layout_constraintTop_toTopOf="parent">
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
