@@ -6,44 +6,54 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- Título -->
-
-    <!-- Texto de Humedad -->
-
-    <!-- Botón para Controlar la Bomba -->
-
     <LinearLayout
-        android:layout_width="411dp"
-        android:layout_height="85dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023">
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:srcCompat="@tools:sample/avatars" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="0dp"
-        android:layout_height="646dp"
-        android:background="#E2F3FD"
+        android:id="@+id/linearLayout"
+        android:layout_width="412dp"
+        android:layout_height="807dp"
+        android:gravity="center"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent">
 
+        <!-- Título o encabezado -->
+        <TextView
+            android:id="@+id/textViewTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Control de Humedad"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Texto que muestra la humedad actual -->
+        <TextView
+            android:id="@+id/textViewHumedad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="Humedad: --%"
+            android:textSize="18sp" />
+
+        <!-- Botón para controlar la bomba -->
+        <Button
+            android:id="@+id/buttonControlBomba"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/purple_500"
+            android:padding="12dp"
+            android:text="Encender Bomba"
+            android:textColor="@android:color/white" />
+
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="412dp"
+        android:layout_height="89dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
