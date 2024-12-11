@@ -1,13 +1,22 @@
 package com.example.aquasmart
 
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.ImageView
-import com.example.aquasmart.model.HumedadResponse
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.example.aquasmart.api.ApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,12 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import android.util.Log
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import android.content.Context
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var textViewHumedad: TextView
@@ -28,8 +32,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private var bombaEncendida = false
     private val intervaloActualizacion: Long = 1000  // Tiempo entre actualizaciones en ms
-
+    // SharedPreferences
+    private lateinit var sharedPreferences: SharedPreferences
+    private val ipKey = "ESP32_IP"  // Clave para almacenar la IP
     private val CHANNEL_ID = "humidity_channel"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,15 +45,15 @@ class MainActivity : AppCompatActivity() {
         textViewHumedad = findViewById(R.id.textViewHumedad)
         controlBombaImageView = findViewById(R.id.ControlBomba)
 
-        // Configuración Retrofit
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.100.152/")  // Cambia a la IP de tu ESP32
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        // Inicializar SharedPreferences
+        sharedPreferences = getSharedPreferences("Settings", MODE_PRIVATE)
 
-        apiService = retrofit.create(ApiService::class.java)
+        // Obtener la IP guardada (si existe)
+        val ipGuardada = sharedPreferences.getString(ipKey, "http://192.168.100.152") // Valor por defecto
+        // Configurar Retrofit con la IP obtenida
+        setupRetrofit(ipGuardada)
 
-        // Configurar botón para controlar la bomba
+        // Configurar ImageView para controlar la bomba
         controlBombaImageView.setOnClickListener {
             if (bombaEncendida) {
                 apagarBomba()
@@ -54,7 +61,28 @@ class MainActivity : AppCompatActivity() {
                 encenderBomba()
             }
         }
+
+        // Configurar botón para guardar IP
+        val buttonGuardarIP = findViewById<Button>(R.id.buttonGuardarIP)
+        val editTextIP = findViewById<EditText>(R.id.editTextIP)
+        buttonGuardarIP.setOnClickListener {
+            val nuevaIP = editTextIP.text.toString()
+            if (nuevaIP.isNotEmpty()) {
+                // Guardar la IP en SharedPreferences
+                val editor = sharedPreferences.edit()
+                editor.putString(ipKey, nuevaIP)
+                editor.apply()
+                // Actualizar la conexión con la nueva IP
+                setupRetrofit(nuevaIP)
+                Toast.makeText(this, "IP guardada: $nuevaIP", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Por favor, ingrese una IP válida", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Crear canal de notificación
         createNotificationChannel()
+
         // Iniciar actualizaciones periódicas de la humedad
         iniciarActualizacionHumedad()
     }
@@ -66,19 +94,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun createNotificationChannel() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            val name = "Humedad Channel"
-            val descriptionText = "Canal para notificaciones de humedad"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            // Registrar el canal
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+    private fun setupRetrofit(ip: String?) {
+        if (ip != null) {
+            val retrofit = Retrofit.Builder()
+                .baseUrl(ip)  // Usar la IP proporcionada
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            apiService = retrofit.create(ApiService::class.java)
         }
+    }
+    private fun createNotificationChannel() {
+        val name = "Humedad Channel"
+        val descriptionText = "Canal para notificaciones de humedad"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            description = descriptionText
+        }
+        // Registrar el canal
+        val notificationManager: NotificationManager =
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
     private fun sendNotification(message: String) {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -87,8 +123,18 @@ class MainActivity : AppCompatActivity() {
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-        with(NotificationManagerCompat.from(this)) {
-            notify(0, builder.build())
+        if (ContextCompat.checkSelfPermission(
+                this, android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED) {
+            // El permiso ha sido concedido, puedes mostrar la notificación
+            with(NotificationManagerCompat.from(this)) {
+                notify(0, builder.build())
+            }
+        } else {
+            // El permiso no ha sido concedido, solicita el permiso
+            ActivityCompat.requestPermissions(
+                this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1
+            )
         }
     }
     private suspend fun obtenerDatosHumedad() {
